@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { Magic } from "magic-sdk";
 import { AlgorandExtension } from "@magic-ext/algorand";
+const algosdk = require('algosdk');
 
 const magic = new Magic("pk_test_D524AFA65D9F4E81", {
   extensions: {
@@ -65,6 +66,52 @@ export default function App() {
     console.log("send transaction", signedTX);
   };
 
+  let client = null;
+  async function setupClient() {
+    if( client == null){
+      const token = {
+        "x-api-key": "10f233c1b6dec945648e2ac830913549349a1742c865b940bd1fdf2fc6b98b60"
+      };
+      const server = "https://hk.bsngate.com/api/1859c58d7f216e31dfb9b8ce95ca51f9e7672b1c0e11b2d76647b1b7d019292e/Algorand-Testnet/algodrest";
+      const port = '';
+      let algodClient = new algosdk.Algodv2(token, server, port);
+      client = algodClient;
+    } else {
+      return client;
+    }
+    return client;
+  }
+
+  const handleSignGroupTransaction = async () => {
+
+    let algodClient = await setupClient();
+
+    let params = await algodClient.getTransactionParams().do();
+
+    const txns = [{
+      from: publicAddress,
+      to: 'OFHW3Z3T2RML7J2S6KYGHPAMO6IQH76PE2HSCAIN5U5NBGXAIPBOY7DCHI',
+      amount: 1000000,
+      closeRemainderTo: undefined,
+      note: undefined,
+      suggestedParams: params,
+    },
+      {
+        from: publicAddress,
+        to: 'XRKQBEV7FINQ66SYAFY33UYHOC4GRAICWI3V6V2TXLCQMPJBGGRHLG2E74',
+        amount: 1000000,
+        closeRemainderTo: undefined,
+        note: undefined,
+        suggestedParams: params,
+      }
+    ]
+
+    const signedTX = await magic.algorand.signGroupTransaction(txns);
+
+    console.log("signedTX", signedTX);
+
+  }
+
   return (
     <div className="App">
       {!isLoggedIn ? (
@@ -126,6 +173,10 @@ export default function App() {
             <button id="btn-send-txn" onClick={handlerSendTransaction}>
               Sign Transaction
             </button>
+          </div>
+          <div className="container">
+            <h1>Sign Group Transaction</h1>
+            <button onClick={handleSignGroupTransaction}>Sign Group Transaction</button>
           </div>
         </div>
       )}
