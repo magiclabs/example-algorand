@@ -112,6 +112,42 @@ export default function App() {
 
   }
 
+  const handleSignGroupTransactionV2 = async () => {
+
+    let algodClient = await setupClient();
+
+    let suggestedParams = await algodClient.getTransactionParams().do();
+
+    const txn1 = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: publicAddress,
+      to: 'OFHW3Z3T2RML7J2S6KYGHPAMO6IQH76PE2HSCAIN5U5NBGXAIPBOY7DCHI',
+      amount: 1000,
+      suggestedParams,
+    });
+
+    const txn2 = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: publicAddress,
+      to: 'XRKQBEV7FINQ66SYAFY33UYHOC4GRAICWI3V6V2TXLCQMPJBGGRHLG2E74',
+      amount: 2000,
+      suggestedParams,
+    });
+
+    const txs = [txn1, txn2];
+    algosdk.assignGroupID(txs);
+
+    const txn1B64 = Buffer.from(txn1.toByte()).toString('base64');
+    const txn2B64 = Buffer.from(txn2.toByte()).toString('base64');
+
+    const txn = [
+      {txn: txn1B64},
+      {txn: txn2B64},
+    ];
+
+    const signedTX = await magic.algorand.signGroupTransactionV2(txn);
+
+    console.log('sign group transaction v2', signedTX);
+  };
+
   return (
     <div className="App">
       {!isLoggedIn ? (
@@ -177,6 +213,10 @@ export default function App() {
           <div className="container">
             <h1>Sign Group Transaction</h1>
             <button onClick={handleSignGroupTransaction}>Sign Group Transaction</button>
+          </div>
+          <div className="container">
+            <h1>Sign Group Transaction V2</h1>
+            <button onClick={handleSignGroupTransactionV2}>Sign Group Transaction V2</button>
           </div>
         </div>
       )}
