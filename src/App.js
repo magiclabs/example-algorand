@@ -4,7 +4,7 @@ import { Magic } from "magic-sdk";
 import { AlgorandExtension } from "@magic-ext/algorand";
 const algosdk = require("algosdk");
 
-const magic = new Magic("pk_live_8D40A7E251F283ED", {
+const magic = new Magic("pk_live_D17FD8D89621B5F3", {
   extensions: {
     algorand: new AlgorandExtension({
       rpcUrl: ""
