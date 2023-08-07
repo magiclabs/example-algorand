@@ -8,9 +8,9 @@
   ],
   "main": "src/index.js",
   "dependencies": {
-    "@magic-ext/algorand": "^2.1.0",
+    "@magic-ext/algorand": "^14.0.0",
     "algosdk": "1.10.1",
-    "magic-sdk": "4.4.0",
+    "magic-sdk": "^19.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-scripts": "3.4.3"
